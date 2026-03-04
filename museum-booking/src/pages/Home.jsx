@@ -14,7 +14,7 @@ function Home() {
 
   const images = [
     "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1549893075-7a9a4c6f8a9f?auto=format&fit=crop&w=1600&q=80",
+    "https://media.timeout.com/images/106197993/750/422/image.jpg",
     "https://images.unsplash.com/photo-1504198266285-165a6c7b3c3c?auto=format&fit=crop&w=1600&q=80"
   ];
 
