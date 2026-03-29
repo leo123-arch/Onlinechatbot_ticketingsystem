@@ -61,12 +61,12 @@ function Profile() {
           </h1>
 
           <div className="space-x-2">
-            <button
+            {/* <button
               onClick={() => setDarkMode(!darkMode)}
               className="bg-gray-500 text-white px-3 py-1 rounded"
             >
               🌙
-            </button>
+            </button> */}
 
             <button
               onClick={handleLogout}
