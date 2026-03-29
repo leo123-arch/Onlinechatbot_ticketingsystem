@@ -7,6 +7,7 @@ import Shows from "./pages/Shows";
 import Booking from "./pages/Booking";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import Layout from "./components/Layout";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+                   
         <Route
           path="/dashboard"
           element={
