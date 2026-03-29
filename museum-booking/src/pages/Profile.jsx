@@ -1,16 +1,13 @@
-// Profile.jsx
+// Profile.jsx (updated - removed duplicate logout)
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { auth, db } from "../firebase";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Layout from "../components/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Profile() {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   const [bookings, setBookings] = useState([]);
   const [name, setName] = useState(localStorage.getItem("name") || "");
@@ -48,18 +45,6 @@ function Profile() {
     setTimeout(() => {
       setToast({ show: false, message: "", type: "" });
     }, 3000);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      showToast("Logged out successfully", "success");
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
-    } catch (error) {
-      showToast("Error logging out", "error");
-    }
   };
 
   const handleSave = async () => {
@@ -131,37 +116,6 @@ function Profile() {
 
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                <i className="fas fa-user-astronaut text-white text-xl"></i>
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  My Profile
-                </h1>
-                <p className="text-sm text-gray-400 mt-1">
-                  Manage your account settings and preferences
-                </p>
-              </div>
-            </div>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleLogout}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-            >
-              <i className="fas fa-sign-out-alt"></i>
-              <span className="hidden sm:inline">Logout</span>
-            </motion.button>
-          </motion.div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Profile Card */}
             <motion.div
@@ -338,7 +292,7 @@ function Profile() {
                     transition={{ duration: 0.3 }}
                   >
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-bold text-blue">
+                      <h3 className="text-xl font-bold text-white">
                         Recent Bookings
                       </h3>
                       <span className="text-sm text-gray-400">
@@ -403,12 +357,6 @@ function Profile() {
                       <div className="text-center py-12 rounded-xl bg-gray-900/50 border border-gray-800">
                         <i className="fas fa-calendar-week text-5xl text-gray-600 mb-4"></i>
                         <p className="text-gray-400">No bookings yet</p>
-                        <button 
-                          onClick={() => navigate("/bookings")}
-                          className="mt-4 px-6 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium hover:shadow-lg transition-all"
-                        >
-                          Book Your First Appointment
-                        </button>
                       </div>
                     )}
                   </motion.div>
