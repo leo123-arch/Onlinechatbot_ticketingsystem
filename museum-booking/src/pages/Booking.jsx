@@ -2,19 +2,42 @@ import { useState } from "react";
 import FakePayment from "../components/FakePayment";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
-import { useNavigate } from "react-router-dom";
 
-function Booking() {
+function Bookings() {
 
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
-  const [seats, setSeats] = useState(1);
-  const navigate = useNavigate();
+  const [seatMap, setSeatMap] = useState({});
 
   const price = 200;
-  const total = seats * price;
 
-  const handleSuccess = async (payment) => {
+  // 🎯 Events Data (same as Home)
+  const events = [
+    { title: "Art Workshop", date: "April 15, 2025", time: "2:00 PM", spots: "25 spots left" },
+    { title: "Guided Tour", date: "April 20, 2025", time: "11:00 AM", spots: "15 spots left" },
+    { title: "Lecture Series", date: "April 25, 2025", time: "4:00 PM", spots: "40 spots left" }
+  ];
+
+  // 🪑 Seat Logic (per card)
+  const getSeats = (i) => seatMap[i] || 1;
+
+  const updateSeats = (i, value) => {
+    setSeatMap(prev => ({
+      ...prev,
+      [i]: Math.max(1, value)
+    }));
+  };
+
+  // 💳 Payment Success
+  const handlePaymentSuccess = async (payment) => {
+    const index = selectedEvent.index;
+    const seats = getSeats(index);
+    const total = seats * price;
+
     await addDoc(collection(db, "bookings"), {
+      eventTitle: selectedEvent.title,
+      eventDate: selectedEvent.date,
+      eventTime: selectedEvent.time,
       seats,
       amount: total,
       paymentId: payment.paymentId,
@@ -26,79 +49,104 @@ function Booking() {
   };
 
   return (
-    
-<div className="relative min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-[350px]">
+    <div className="min-h-screen bg-gray-100 p-6">
 
-        <button
-  onClick={() => navigate("/dashboard")}
-  className="absolute top-6 left-6 bg-white shadow px-4 py-2 rounded-lg hover:bg-gray-100"
->
-  ⬅ Back
-</button>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        🎟 Book Events
+      </h1>
 
-        {/* Title */}
-        <h1 className="text-2xl font-bold text-center mb-6">
-          🎟️ Book Your Ticket
-        </h1>
+      <div className="grid md:grid-cols-3 gap-6">
 
-        {/* Ticket Card */}
-        <div className="bg-indigo-500 text-white p-5 rounded-xl mb-6">
-          <h2 className="text-lg font-semibold">Museum Entry</h2>
-          <p className="text-sm opacity-80">Price per seat: ₹{price}</p>
-        </div>
+        {events.map((event, i) => {
+          const seats = getSeats(i);
+          const total = seats * price;
 
-        {/* Seat Selector */}
-        <div className="mb-6">
-          <label className="block mb-2 font-medium">Select Seats</label>
-
-          <div className="flex items-center justify-between border rounded-lg p-2">
-            <button
-              onClick={() => setSeats(prev => Math.max(1, prev - 1))}
-              className="px-3 py-1 bg-gray-200 rounded"
+          return (
+            <div
+              key={i}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden"
             >
-              -
-            </button>
 
-            <span className="text-lg font-semibold">{seats}</span>
+              {/* Image */}
+              <img
+                src={`https://source.unsplash.com/400x300/?event,${i}`}
+                className="h-40 w-full object-cover"
+              />
 
-            <button
-              onClick={() => setSeats(prev => prev + 1)}
-              className="px-3 py-1 bg-gray-200 rounded"
-            >
-              +
-            </button>
-          </div>
-        </div>
+              {/* Content */}
+              <div className="p-5">
 
-        {/* Total */}
-        <div className="flex justify-between items-center mb-6">
-          <span className="font-medium">Total Amount</span>
-          <span className="text-xl font-bold text-indigo-600">
-            ₹{total}
-          </span>
-        </div>
+                <h2 className="text-xl font-bold mb-2">
+                  {event.title}
+                </h2>
 
-        {/* Pay Button */}
-        <button
-          onClick={() => setShowPayment(true)}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl transition"
-        >
-          Pay Now 💳
-        </button>
+                <p className="text-sm text-gray-500">
+                  📅 {event.date}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  ⏰ {event.time}
+                </p>
+
+                <p className="text-xs text-purple-600 mb-3">
+                  🎟 {event.spots}
+                </p>
+
+                {/* Seat Selector */}
+                <div className="flex items-center justify-between mb-4 border rounded-lg p-2">
+                  <button
+                    onClick={() => updateSeats(i, seats - 1)}
+                    className="px-3 bg-gray-200 rounded"
+                  >
+                    -
+                  </button>
+
+                  <span className="font-semibold">{seats}</span>
+
+                  <button
+                    onClick={() => updateSeats(i, seats + 1)}
+                    className="px-3 bg-gray-200 rounded"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Total */}
+                <p className="font-semibold mb-4">
+                  Total: ₹{total}
+                </p>
+
+                {/* Pay Button */}
+                <button
+                  onClick={() => {
+                    setSelectedEvent({ ...event, index: i });
+                    setShowPayment(true);
+                  }}
+                  className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                >
+                  Pay & Book 💳
+                </button>
+
+              </div>
+            </div>
+          );
+        })}
 
       </div>
 
       {/* Payment Modal */}
       {showPayment && (
         <FakePayment
-          amount={total}
-          onSuccess={handleSuccess}
+          amount={
+            getSeats(selectedEvent.index) * price
+          }
+          onSuccess={handlePaymentSuccess}
           onClose={() => setShowPayment(false)}
         />
       )}
+
     </div>
   );
 }
 
-export default Booking;
+export default Bookings;
