@@ -32,9 +32,9 @@ function Layout({ children }) {
 
           <li>
             <button
-              onClick={() => navigate("/bookings")}
+              onClick={() => navigate("/Booking")}
               className={`w-full text-left px-3 py-2 rounded 
-              ${location.pathname === "/bookings" ? "bg-gray-700" : "hover:bg-gray-700"}`}
+              ${location.pathname === "/Booking" ? "bg-gray-700" : "hover:bg-gray-700"}`}
             >
               📋 Bookings
             </button>

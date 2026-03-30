@@ -129,7 +129,7 @@ function Dashboard() {
 
     <li>
       <button
-        onClick={() => navigate("/bookings")}
+        onClick={() => navigate("/Booking")}
         className="w-full text-left px-3 py-2 rounded hover:bg-gray-700"
       >
         📋 Bookings
