@@ -292,7 +292,7 @@ function Profile() {
                     transition={{ duration: 0.3 }}
                   >
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-bold text-white">
+                      <h3 className="text-xl font-bold text-blue">
                         Recent Bookings
                       </h3>
                       <span className="text-sm text-gray-400">
